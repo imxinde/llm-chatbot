@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI ChatBot</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="#2563EB"/>
+            <path d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6ZM12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16Z" fill="#3B82F6"/>
+            <circle cx="12" cy="12" r="3" fill="#60A5FA"/>
+          </svg>
+          <span class="logo-text">AI ChatBot</span>
+        </div>
+      </div>
+      <div class="header-center">
+        <button class="model-selector" id="modelSelector">
+          <span id="currentModel">GPT-3.5 Turbo</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" id="newChatBtn" title="新建对话">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Chat Area -->
+    <main class="chat-area" id="chatArea">
+      <div class="welcome-message" id="welcomeMessage">
+        <div class="welcome-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" fill="#EEF2FF"/>
+            <path d="M12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12C18 8.69 15.31 6 12 6Z" fill="#C7D2FE"/>
+            <circle cx="12" cy="12" r="3" fill="#2563EB"/>
+          </svg>
+        </div>
+        <h2>你好！我是 AI 助手</h2>
+        <p>有什么我可以帮助你的吗？</p>
+      </div>
+      <div class="messages-container" id="messagesContainer"></div>
+    </main>
+
+    <!-- Input Area -->
+    <footer class="input-area">
+      <div class="input-wrapper">
+        <textarea 
+          id="messageInput" 
+          placeholder="输入消息，按 Enter 发送，Shift+Enter 换行..."
+          rows="1"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <p class="input-hint">AI 可能会产生不准确的信息，请注意甄别</p>
+    </footer>
+
+    <!-- Model Selection Modal -->
+    <div class="modal-overlay" id="modelModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>选择模型</h3>
+          <button class="btn-icon modal-close" id="closeModal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="model-list" id="modelList">
+            <div class="loading">加载模型列表中...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
