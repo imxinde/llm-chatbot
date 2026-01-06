@@ -1,0 +1,23 @@
+{
+  "name": "@app/api-spec",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenAPI specification for LLM Chatbot API",
+  "type": "module",
+  "main": "./generated/index.js",
+  "types": "./generated/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./generated/index.d.ts",
+      "import": "./generated/index.js"
+    },
+    "./openapi.yaml": "./openapi.yaml"
+  },
+  "scripts": {
+    "generate": "openapi-typescript openapi.yaml -o generated/api-types.ts",
+    "clean": "rm -rf generated"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.0.0"
+  }
+}

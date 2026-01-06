@@ -1,22 +1,25 @@
 {
-  "name": "llm-chatbot",
+  "name": "llm-chatbot-monorepo",
   "version": "1.0.0",
-  "description": "A simple LLM ChatBot application using OpenRouter API",
+  "private": true,
+  "description": "LLM Chatbot - OpenAPI + pnpm Monorepo Architecture",
   "type": "module",
-  "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev:server": "node --watch src/server.js",
-    "dev:client": "cd client && npm run dev",
-    "dev": "npm run dev:server & npm run dev:client",
-    "build": "cd client && npm run build",
-    "preview": "cd client && npm run preview"
+    "dev": "pnpm -r --parallel run dev",
+    "dev:frontend": "pnpm --filter @app/frontend run dev",
+    "dev:backend": "pnpm --filter @app/backend run dev",
+    "build": "pnpm -r run build",
+    "build:frontend": "pnpm --filter @app/frontend run build",
+    "build:backend": "pnpm --filter @app/backend run build",
+    "start": "pnpm --filter @app/backend run start",
+    "generate:api": "pnpm --filter @app/api-spec run generate",
+    "clean": "pnpm -r run clean"
   },
-  "keywords": ["chatbot", "llm", "openrouter", "express"],
+  "keywords": ["chatbot", "llm", "openrouter", "monorepo", "openapi"],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "express": "^4.18.2",
-    "dotenv": "^16.3.1"
+  "packageManager": "pnpm@10.26.2",
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
