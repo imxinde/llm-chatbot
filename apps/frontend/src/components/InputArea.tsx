@@ -1,18 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
-import { useAppContext } from '../context/AppContext.jsx';
-import { sendChatMessage } from '../api/client.js';
-import { MessageRole } from '@app/shared';
+import { useState, useRef, useEffect, FormEvent, KeyboardEvent, ChangeEvent } from 'react';
+import { useAppContext, UIMessage } from '../context/AppContext';
+import { sendChatMessage } from '../api/client';
+import { MessageRole, MessageRoleType } from '@app/shared';
 
-// Generate unique ID for messages
-function generateId() {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+/**
+ * Generate unique ID for messages
+ */
+function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 }
 
-function InputArea() {
+function InputArea(): React.JSX.Element {
   const { state, dispatch, ActionTypes } = useAppContext();
-  const [input, setInput] = useState('');
-  const textareaRef = useRef(null);
-  const abortControllerRef = useRef(null);
+  const [input, setInput] = useState<string>('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -32,7 +34,7 @@ function InputArea() {
     };
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e?: FormEvent<HTMLFormElement>): Promise<void> => {
     e?.preventDefault();
     
     const content = input.trim();
@@ -48,17 +50,17 @@ function InputArea() {
     setInput('');
 
     // Add user message
-    const userMessage = {
+    const userMessage: UIMessage = {
       id: generateId(),
-      role: MessageRole.USER,
+      role: MessageRole.USER as MessageRoleType,
       content
     };
     dispatch({ type: ActionTypes.ADD_MESSAGE, payload: userMessage });
 
     // Add placeholder for assistant message
-    const assistantMessage = {
+    const assistantMessage: UIMessage = {
       id: generateId(),
-      role: MessageRole.ASSISTANT,
+      role: MessageRole.ASSISTANT as MessageRoleType,
       content: '',
       isStreaming: true
     };
@@ -77,14 +79,14 @@ function InputArea() {
       messages,
       model: state.currentModel,
       signal: abortControllerRef.current.signal,
-      onChunk: (chunk) => {
+      onChunk: (chunk: string) => {
         assistantContent += chunk;
         dispatch({
           type: ActionTypes.UPDATE_LAST_MESSAGE,
           payload: assistantContent
         });
       },
-      onError: (error) => {
+      onError: (error: Error) => {
         console.error('Chat error:', error);
         dispatch({
           type: ActionTypes.UPDATE_LAST_MESSAGE,
@@ -103,21 +105,25 @@ function InputArea() {
     abortControllerRef.current = null;
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>): void => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit();
+      void handleSubmit();
     }
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>): void => {
+    setInput(e.target.value);
   };
 
   return (
     <footer className="input-area">
-      <form className="input-form" onSubmit={handleSubmit}>
+      <form className="input-form" onSubmit={(e) => void handleSubmit(e)}>
         <textarea
           ref={textareaRef}
           className="message-input"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Type your message... (Shift+Enter for new line)"
           rows={1}

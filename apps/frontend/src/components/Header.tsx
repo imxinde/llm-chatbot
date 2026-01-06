@@ -1,13 +1,13 @@
-import { useAppContext } from '../context/AppContext.jsx';
+import { useAppContext } from '../context/AppContext';
 
-function Header() {
+function Header(): React.JSX.Element {
   const { state, dispatch, ActionTypes } = useAppContext();
 
-  const handleNewChat = () => {
+  const handleNewChat = (): void => {
     dispatch({ type: ActionTypes.CLEAR_MESSAGES });
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (): void => {
     dispatch({ type: ActionTypes.TOGGLE_MODAL });
   };
 

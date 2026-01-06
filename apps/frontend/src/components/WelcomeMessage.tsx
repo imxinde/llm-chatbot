@@ -1,4 +1,4 @@
-function WelcomeMessage() {
+function WelcomeMessage(): React.JSX.Element {
   return (
     <div className="welcome-message">
       <div className="welcome-icon">🤖</div>

@@ -1,44 +1,46 @@
-import { useEffect, useState } from 'react';
-import { useAppContext } from '../context/AppContext.jsx';
-import { getModels } from '../api/client.js';
+import { useEffect, useState, MouseEvent } from 'react';
+import { useAppContext } from '../context/AppContext';
+import { getModels } from '../api/client';
+import { Model } from '@app/shared';
 
-function ModelModal() {
+function ModelModal(): React.JSX.Element {
   const { state, dispatch, ActionTypes } = useAppContext();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Only load if models not already loaded
     if (state.models.length > 0) return;
 
-    const loadModels = async () => {
+    const loadModels = async (): Promise<void> => {
       setLoading(true);
       setError(null);
       try {
         const models = await getModels();
         dispatch({ type: ActionTypes.SET_MODELS, payload: models });
       } catch (err) {
-        setError(err.message);
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
-    loadModels();
+    void loadModels();
   }, [dispatch, ActionTypes, state.models.length]);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     dispatch({ type: ActionTypes.TOGGLE_MODAL });
   };
 
-  const handleSelect = (model) => {
+  const handleSelect = (model: Model): void => {
     dispatch({
       type: ActionTypes.SELECT_MODEL,
       payload: { id: model.id, name: model.name }
     });
   };
 
-  const handleBackdropClick = (e) => {
+  const handleBackdropClick = (e: MouseEvent<HTMLDivElement>): void => {
     if (e.target === e.currentTarget) {
       handleClose();
     }

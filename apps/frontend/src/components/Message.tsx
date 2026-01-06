@@ -1,9 +1,20 @@
+import { MessageRoleType } from '@app/shared';
+
+/**
+ * Message component props
+ */
+interface MessageProps {
+  role: MessageRoleType;
+  content: string;
+  isStreaming?: boolean;
+}
+
 /**
  * Format message content with basic markdown support
- * @param {string} content - Raw message content
- * @returns {string} - HTML formatted content
+ * @param content - Raw message content
+ * @returns HTML formatted content
  */
-function formatMessage(content) {
+function formatMessage(content: string): string {
   // Escape HTML first
   let formatted = content
     .replace(/&/g, '&amp;')
@@ -40,7 +51,7 @@ function formatMessage(content) {
   return formatted;
 }
 
-function Message({ role, content, isStreaming }) {
+function Message({ role, content, isStreaming = false }: MessageProps): React.JSX.Element {
   const isUser = role === 'user';
   const formattedContent = formatMessage(content);
 

@@ -1,27 +1,52 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
+import type { Router as RouterType } from 'express';
 import openRouterService from '../services/openrouter.js';
-import { API_ENDPOINTS, SSE_MARKERS, MessageRole } from '@app/shared';
+import { SSE_MARKERS, MessageRole, Message, SSEChunk } from '@app/shared';
 
-const router = Router();
+const router: RouterType = Router();
+
+/**
+ * Chat request body structure
+ */
+interface ChatRequestBody {
+  messages: Message[];
+  model?: string;
+}
+
+/**
+ * Validation result
+ */
+interface ValidationResult {
+  valid: boolean;
+  error?: string;
+}
 
 /**
  * Validate chat request body
- * @param {Object} body - Request body
- * @returns {{ valid: boolean, error?: string }}
+ * @param body - Request body
+ * @returns Validation result
  */
-function validateChatRequest(body) {
-  const { messages, model } = body;
+function validateChatRequest(body: unknown): ValidationResult {
+  if (!body || typeof body !== 'object') {
+    return { valid: false, error: 'Request body is required' };
+  }
+
+  const { messages, model } = body as Record<string, unknown>;
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     return { valid: false, error: 'Messages array is required and must not be empty' };
   }
 
-  const validRoles = Object.values(MessageRole);
+  const validRoles: string[] = Object.values(MessageRole);
   for (const msg of messages) {
-    if (!msg.role || !validRoles.includes(msg.role)) {
+    if (!msg || typeof msg !== 'object') {
+      return { valid: false, error: 'Each message must be an object' };
+    }
+    const message = msg as Record<string, unknown>;
+    if (!message.role || !validRoles.includes(message.role as string)) {
       return { valid: false, error: `Invalid message role. Must be one of: ${validRoles.join(', ')}` };
     }
-    if (typeof msg.content !== 'string') {
+    if (typeof message.content !== 'string') {
       return { valid: false, error: 'Message content must be a string' };
     }
   }
@@ -33,12 +58,25 @@ function validateChatRequest(body) {
   return { valid: true };
 }
 
+/**
+ * Type guard to check if body is valid ChatRequestBody
+ */
+function isChatRequestBody(body: unknown): body is ChatRequestBody {
+  return validateChatRequest(body).valid;
+}
+
 // POST /api/chat - Stream chat completion
-router.post('/chat', async (req, res) => {
+router.post('/chat', async (req: Request, res: Response): Promise<void> => {
   // Validate request
   const validation = validateChatRequest(req.body);
   if (!validation.valid) {
-    return res.status(400).json({ error: validation.error });
+    res.status(400).json({ error: validation.error });
+    return;
+  }
+
+  if (!isChatRequestBody(req.body)) {
+    res.status(400).json({ error: 'Invalid request body' });
+    return;
   }
 
   const { messages, model } = req.body;
@@ -54,9 +92,13 @@ router.post('/chat', async (req, res) => {
     const reader = stream.getReader();
     const decoder = new TextDecoder();
 
-    while (true) {
+    let reading = true;
+    while (reading) {
       const { done, value } = await reader.read();
-      if (done) break;
+      if (done) {
+        reading = false;
+        break;
+      }
 
       const chunk = decoder.decode(value, { stream: true });
       const lines = chunk.split('\n');
@@ -71,7 +113,7 @@ router.post('/chat', async (req, res) => {
           }
 
           try {
-            const parsed = JSON.parse(data);
+            const parsed = JSON.parse(data) as SSEChunk;
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               res.write(`data: ${JSON.stringify({ content })}\n\n`);
@@ -86,20 +128,22 @@ router.post('/chat', async (req, res) => {
     res.write(`data: ${SSE_MARKERS.DONE}\n\n`);
     res.end();
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Chat error:', error);
-    res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+    res.write(`data: ${JSON.stringify({ error: errorMessage })}\n\n`);
     res.end();
   }
 });
 
 // GET /api/models - Get available models
-router.get('/models', async (req, res) => {
+router.get('/models', async (_req: Request, res: Response): Promise<void> => {
   try {
     const models = await openRouterService.getModels();
     res.json({ models });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Models error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: errorMessage });
   }
 });
 

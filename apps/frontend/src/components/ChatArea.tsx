@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { useAppContext } from '../context/AppContext.jsx';
-import Message from './Message.jsx';
-import WelcomeMessage from './WelcomeMessage.jsx';
+import { useAppContext } from '../context/AppContext';
+import Message from './Message';
+import WelcomeMessage from './WelcomeMessage';
 
-function ChatArea() {
+function ChatArea(): React.JSX.Element {
   const { state } = useAppContext();
-  const chatEndRef = useRef(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {

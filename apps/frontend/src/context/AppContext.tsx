@@ -1,7 +1,28 @@
-import { createContext, useContext, useReducer } from 'react';
-import { DEFAULTS } from '@app/shared';
+import { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react';
+import { DEFAULTS, Message, Model } from '@app/shared';
 
-// Action Types
+/**
+ * Extended message type for UI state
+ */
+interface UIMessage extends Message {
+  isStreaming?: boolean;
+}
+
+/**
+ * Application state structure
+ */
+interface AppState {
+  messages: UIMessage[];
+  currentModel: string;
+  currentModelName: string;
+  models: Model[];
+  isLoading: boolean;
+  isModalOpen: boolean;
+}
+
+/**
+ * Action types enum
+ */
 export const ActionTypes = {
   ADD_MESSAGE: 'ADD_MESSAGE',
   UPDATE_LAST_MESSAGE: 'UPDATE_LAST_MESSAGE',
@@ -10,10 +31,31 @@ export const ActionTypes = {
   SELECT_MODEL: 'SELECT_MODEL',
   CLEAR_MESSAGES: 'CLEAR_MESSAGES',
   TOGGLE_MODAL: 'TOGGLE_MODAL'
-};
+} as const;
+
+/**
+ * Action type union
+ */
+type AppAction =
+  | { type: typeof ActionTypes.ADD_MESSAGE; payload: UIMessage }
+  | { type: typeof ActionTypes.UPDATE_LAST_MESSAGE; payload: string }
+  | { type: typeof ActionTypes.SET_LOADING; payload: boolean }
+  | { type: typeof ActionTypes.SET_MODELS; payload: Model[] }
+  | { type: typeof ActionTypes.SELECT_MODEL; payload: { id: string; name: string } }
+  | { type: typeof ActionTypes.CLEAR_MESSAGES }
+  | { type: typeof ActionTypes.TOGGLE_MODAL };
+
+/**
+ * Context value type
+ */
+interface AppContextValue {
+  state: AppState;
+  dispatch: Dispatch<AppAction>;
+  ActionTypes: typeof ActionTypes;
+}
 
 // Initial State
-const initialState = {
+const initialState: AppState = {
   messages: [],
   currentModel: DEFAULTS.MODEL,
   currentModelName: DEFAULTS.MODEL_NAME,
@@ -22,8 +64,10 @@ const initialState = {
   isModalOpen: false
 };
 
-// Reducer
-function appReducer(state, action) {
+/**
+ * App reducer function
+ */
+function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case ActionTypes.ADD_MESSAGE:
       return {
@@ -79,10 +123,19 @@ function appReducer(state, action) {
 }
 
 // Context
-const AppContext = createContext(null);
+const AppContext = createContext<AppContextValue | null>(null);
 
-// Provider Component
-export function AppProvider({ children }) {
+/**
+ * Provider component props
+ */
+interface AppProviderProps {
+  children: ReactNode;
+}
+
+/**
+ * App Provider Component
+ */
+export function AppProvider({ children }: AppProviderProps): React.JSX.Element {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   return (
@@ -92,11 +145,16 @@ export function AppProvider({ children }) {
   );
 }
 
-// Custom Hook
-export function useAppContext() {
+/**
+ * Custom hook to access app context
+ */
+export function useAppContext(): AppContextValue {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('useAppContext must be used within an AppProvider');
   }
   return context;
 }
+
+// Export types for use in other components
+export type { AppState, AppAction, UIMessage };
