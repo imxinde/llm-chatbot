@@ -2,6 +2,7 @@
   "name": "llm-chatbot",
   "version": "1.0.0",
   "description": "A simple LLM ChatBot application using OpenRouter API",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

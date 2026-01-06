@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import openRouterService from '../services/openrouter.js';
+
 const router = express.Router();
-const openRouterService = require('../services/openrouter');
 
 /**
  * POST /api/chat
@@ -90,4 +91,4 @@ router.get('/models', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

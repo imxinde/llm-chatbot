@@ -1,14 +1,14 @@
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const chatRoutes = require('./routes/chat');
+import 'dotenv/config';
+import express from 'express';
+import { fileURLToPath } from 'url';
+import chatRoutes from './routes/chat.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(fileURLToPath(new URL('../public', import.meta.url))));
 
 // API Routes
 app.use('/api', chatRoutes);

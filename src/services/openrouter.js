@@ -96,4 +96,4 @@ class OpenRouterService {
 // Create singleton instance
 const openRouterService = new OpenRouterService(process.env.OPENROUTER_API_KEY);
 
-module.exports = openRouterService;
+export default openRouterService;
