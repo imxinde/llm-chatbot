@@ -6,7 +6,11 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "dev:server": "node --watch src/server.js",
+    "dev:client": "cd client && npm run dev",
+    "dev": "npm run dev:server & npm run dev:client",
+    "build": "cd client && npm run build",
+    "preview": "cd client && npm run preview"
   },
   "keywords": ["chatbot", "llm", "openrouter", "express"],
   "author": "",

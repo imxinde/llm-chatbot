@@ -1,7 +1,11 @@
 /**
  * AI ChatBot - Main Application
  * A simple LLM chat application using OpenRouter API
+ * Built with Vite for HMR support
  */
+
+// Import styles
+import './styles/main.css';
 
 // State
 const state = {
@@ -362,4 +366,9 @@ function openModelModal() {
  */
 function closeModelModal() {
   elements.modelModal.classList.remove('active');
+}
+
+// Vite HMR support
+if (import.meta.hot) {
+  import.meta.hot.accept();
 }
