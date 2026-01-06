@@ -32,3 +32,6 @@ apps/frontend/src/api/generated/
 # Cache
 .turbo/
 .cache/
+
+# Test coverage
+coverage/
