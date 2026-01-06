@@ -1,7 +1,7 @@
-import { useEffect, useState, MouseEvent } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { getModels } from '../api/client';
-import { Model } from '@app/shared';
+import type { Model } from '@app/shared';
 
 function ModelModal(): React.JSX.Element {
   const { state, dispatch, ActionTypes } = useAppContext();
@@ -36,7 +36,7 @@ function ModelModal(): React.JSX.Element {
   const handleSelect = (model: Model): void => {
     dispatch({
       type: ActionTypes.SELECT_MODEL,
-      payload: { id: model.id, name: model.name }
+      payload: { id: model.id, name: model.name },
     });
   };
 
@@ -51,7 +51,9 @@ function ModelModal(): React.JSX.Element {
       <div className="modal">
         <div className="modal-header">
           <h2>Select Model</h2>
-          <button className="modal-close" onClick={handleClose}>×</button>
+          <button className="modal-close" onClick={handleClose}>
+            ×
+          </button>
         </div>
         <div className="modal-body">
           {loading && <div className="loading">Loading models...</div>}
@@ -62,12 +64,12 @@ function ModelModal(): React.JSX.Element {
                 <button
                   key={model.id}
                   className={`model-item ${model.id === state.currentModel ? 'selected' : ''}`}
-                  onClick={() => handleSelect(model)}
+                  onClick={() => {
+                    handleSelect(model);
+                  }}
                 >
                   <div className="model-item-name">{model.name}</div>
-                  {model.description && (
-                    <div className="model-item-desc">{model.description}</div>
-                  )}
+                  {model.description && <div className="model-item-desc">{model.description}</div>}
                   {model.context_length && (
                     <div className="model-item-context">
                       Context: {model.context_length.toLocaleString()} tokens

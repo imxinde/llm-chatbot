@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express, { Request, Response } from 'express';
+import express, { type Request, type Response } from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -20,7 +20,7 @@ interface CorsOptions {
 
 const corsOptions: CorsOptions = {
   origin: process.env.ALLOWED_ORIGINS?.split(',') ?? '*',
-  credentials: true
+  credentials: true,
 };
 
 // Middleware
@@ -34,7 +34,7 @@ app.use('/api', chatRoutes);
 if (process.env.NODE_ENV === 'production') {
   const frontendDist = path.join(__dirname, '../../frontend/dist');
   app.use(express.static(frontendDist));
-  
+
   // SPA fallback - serve index.html for all non-API routes
   app.get('*', (_req: Request, res: Response) => {
     res.sendFile(path.join(frontendDist, 'index.html'));

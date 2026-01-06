@@ -1,7 +1,14 @@
-import { useState, useRef, useEffect, FormEvent, KeyboardEvent, ChangeEvent } from 'react';
-import { useAppContext, UIMessage } from '../context/AppContext';
+import {
+  useState,
+  useRef,
+  useEffect,
+  type FormEvent,
+  type KeyboardEvent,
+  type ChangeEvent,
+} from 'react';
+import { useAppContext, type UIMessage } from '../context/AppContext';
 import { sendChatMessage } from '../api/client';
-import { MessageRole, MessageRoleType } from '@app/shared';
+import { MessageRole, type MessageRoleType } from '@app/shared';
 
 /**
  * Generate unique ID for messages
@@ -36,7 +43,7 @@ function InputArea(): React.JSX.Element {
 
   const handleSubmit = async (e?: FormEvent<HTMLFormElement>): Promise<void> => {
     e?.preventDefault();
-    
+
     const content = input.trim();
     if (!content || state.isLoading) return;
 
@@ -53,7 +60,7 @@ function InputArea(): React.JSX.Element {
     const userMessage: UIMessage = {
       id: generateId(),
       role: MessageRole.USER as MessageRoleType,
-      content
+      content,
     };
     dispatch({ type: ActionTypes.ADD_MESSAGE, payload: userMessage });
 
@@ -62,15 +69,15 @@ function InputArea(): React.JSX.Element {
       id: generateId(),
       role: MessageRole.ASSISTANT as MessageRoleType,
       content: '',
-      isStreaming: true
+      isStreaming: true,
     };
     dispatch({ type: ActionTypes.ADD_MESSAGE, payload: assistantMessage });
     dispatch({ type: ActionTypes.SET_LOADING, payload: true });
 
     // Prepare messages for API
     const messages = [
-      ...state.messages.map(m => ({ role: m.role, content: m.content })),
-      { role: userMessage.role, content: userMessage.content }
+      ...state.messages.map((m) => ({ role: m.role, content: m.content })),
+      { role: userMessage.role, content: userMessage.content },
     ];
 
     let assistantContent = '';
@@ -83,22 +90,22 @@ function InputArea(): React.JSX.Element {
         assistantContent += chunk;
         dispatch({
           type: ActionTypes.UPDATE_LAST_MESSAGE,
-          payload: assistantContent
+          payload: assistantContent,
         });
       },
       onError: (error: Error) => {
         console.error('Chat error:', error);
         dispatch({
           type: ActionTypes.UPDATE_LAST_MESSAGE,
-          payload: assistantContent || `Error: ${error.message}`
+          payload: assistantContent || `Error: ${error.message}`,
         });
       },
       onDone: () => {
         dispatch({
           type: ActionTypes.UPDATE_LAST_MESSAGE,
-          payload: assistantContent
+          payload: assistantContent,
         });
-      }
+      },
     });
 
     dispatch({ type: ActionTypes.SET_LOADING, payload: false });
@@ -129,11 +136,7 @@ function InputArea(): React.JSX.Element {
           rows={1}
           disabled={state.isLoading}
         />
-        <button 
-          type="submit" 
-          className="send-button"
-          disabled={!input.trim() || state.isLoading}
-        >
+        <button type="submit" className="send-button" disabled={!input.trim() || state.isLoading}>
           {state.isLoading ? '...' : '➤'}
         </button>
       </form>

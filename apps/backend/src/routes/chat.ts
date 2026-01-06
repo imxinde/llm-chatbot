@@ -1,7 +1,7 @@
-import { Router, Request, Response } from 'express';
+import { Router, type Request, type Response } from 'express';
 import type { Router as RouterType } from 'express';
 import openRouterService from '../services/openrouter.js';
-import { SSE_MARKERS, MessageRole, Message, SSEChunk } from '@app/shared';
+import { SSE_MARKERS, MessageRole, type Message, type SSEChunk } from '@app/shared';
 
 const router: RouterType = Router();
 
@@ -44,7 +44,10 @@ function validateChatRequest(body: unknown): ValidationResult {
     }
     const message = msg as Record<string, unknown>;
     if (!message.role || !validRoles.includes(message.role as string)) {
-      return { valid: false, error: `Invalid message role. Must be one of: ${validRoles.join(', ')}` };
+      return {
+        valid: false,
+        error: `Invalid message role. Must be one of: ${validRoles.join(', ')}`,
+      };
     }
     if (typeof message.content !== 'string') {
       return { valid: false, error: 'Message content must be a string' };
@@ -106,7 +109,7 @@ router.post('/chat', async (req: Request, res: Response): Promise<void> => {
       for (const line of lines) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6);
-          
+
           if (data === '[DONE]') {
             res.write(`data: ${SSE_MARKERS.DONE}\n\n`);
             continue;

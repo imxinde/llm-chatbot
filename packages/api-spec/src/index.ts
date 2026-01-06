@@ -1,6 +1,6 @@
 /**
  * API Specification Types
- * 
+ *
  * This module re-exports types that match the OpenAPI specification
  * defined in openapi.yaml
  */
@@ -18,10 +18,17 @@ export type {
   OpenRouterModelsResponse,
   AppState,
   AppAction,
-  SendChatMessageOptions
+  SendChatMessageOptions,
 } from '@app/shared';
 
-export { MessageRole, API_ENDPOINTS, DEFAULTS, SSE_MARKERS, HTTP_STATUS, CONTENT_TYPES } from '@app/shared';
+export {
+  MessageRole,
+  API_ENDPOINTS,
+  DEFAULTS,
+  SSE_MARKERS,
+  HTTP_STATUS,
+  CONTENT_TYPES,
+} from '@app/shared';
 
 /**
  * API Route definitions matching OpenAPI spec
@@ -30,10 +37,10 @@ export interface ApiRoutes {
   '/api/chat': {
     POST: {
       requestBody: {
-        messages: Array<{
+        messages: {
           role: 'user' | 'assistant' | 'system';
           content: string;
-        }>;
+        }[];
         model?: string;
       };
       response: ReadableStream | string;
@@ -42,12 +49,12 @@ export interface ApiRoutes {
   '/api/models': {
     GET: {
       response: {
-        models: Array<{
+        models: {
           id: string;
           name: string;
           description?: string;
           context_length?: number;
-        }>;
+        }[];
       };
     };
   };
@@ -58,7 +65,7 @@ export interface ApiRoutes {
  */
 export type RequestBody<
   Route extends keyof ApiRoutes,
-  Method extends keyof ApiRoutes[Route]
+  Method extends keyof ApiRoutes[Route],
 > = ApiRoutes[Route][Method] extends { requestBody: infer R } ? R : never;
 
 /**
@@ -66,5 +73,5 @@ export type RequestBody<
  */
 export type ResponseType<
   Route extends keyof ApiRoutes,
-  Method extends keyof ApiRoutes[Route]
+  Method extends keyof ApiRoutes[Route],
 > = ApiRoutes[Route][Method] extends { response: infer R } ? R : never;

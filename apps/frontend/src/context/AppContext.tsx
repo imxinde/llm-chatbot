@@ -1,5 +1,5 @@
-import { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react';
-import { DEFAULTS, Message, Model } from '@app/shared';
+import { createContext, useContext, useReducer, type ReactNode, type Dispatch } from 'react';
+import { DEFAULTS, type Message, type Model } from '@app/shared';
 
 /**
  * Extended message type for UI state
@@ -30,7 +30,7 @@ export const ActionTypes = {
   SET_MODELS: 'SET_MODELS',
   SELECT_MODEL: 'SELECT_MODEL',
   CLEAR_MESSAGES: 'CLEAR_MESSAGES',
-  TOGGLE_MODAL: 'TOGGLE_MODAL'
+  TOGGLE_MODAL: 'TOGGLE_MODAL',
 } as const;
 
 /**
@@ -61,7 +61,7 @@ const initialState: AppState = {
   currentModelName: DEFAULTS.MODEL_NAME,
   models: [],
   isLoading: false,
-  isModalOpen: false
+  isModalOpen: false,
 };
 
 /**
@@ -72,7 +72,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case ActionTypes.ADD_MESSAGE:
       return {
         ...state,
-        messages: [...state.messages, action.payload]
+        messages: [...state.messages, action.payload],
       };
 
     case ActionTypes.UPDATE_LAST_MESSAGE:
@@ -82,19 +82,19 @@ function appReducer(state: AppState, action: AppAction): AppState {
           idx === state.messages.length - 1
             ? { ...msg, content: action.payload, isStreaming: false }
             : msg
-        )
+        ),
       };
 
     case ActionTypes.SET_LOADING:
       return {
         ...state,
-        isLoading: action.payload
+        isLoading: action.payload,
       };
 
     case ActionTypes.SET_MODELS:
       return {
         ...state,
-        models: action.payload
+        models: action.payload,
       };
 
     case ActionTypes.SELECT_MODEL:
@@ -102,19 +102,19 @@ function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         currentModel: action.payload.id,
         currentModelName: action.payload.name,
-        isModalOpen: false
+        isModalOpen: false,
       };
 
     case ActionTypes.CLEAR_MESSAGES:
       return {
         ...state,
-        messages: []
+        messages: [],
       };
 
     case ActionTypes.TOGGLE_MODAL:
       return {
         ...state,
-        isModalOpen: !state.isModalOpen
+        isModalOpen: !state.isModalOpen,
       };
 
     default:
@@ -139,9 +139,7 @@ export function AppProvider({ children }: AppProviderProps): React.JSX.Element {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   return (
-    <AppContext.Provider value={{ state, dispatch, ActionTypes }}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={{ state, dispatch, ActionTypes }}>{children}</AppContext.Provider>
   );
 }
 

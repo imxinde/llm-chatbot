@@ -1,4 +1,11 @@
-import { API_ENDPOINTS, SSE_MARKERS, Message, Model, ModelsResponse, ErrorResponse } from '@app/shared';
+import {
+  API_ENDPOINTS,
+  SSE_MARKERS,
+  type Message,
+  type Model,
+  type ModelsResponse,
+  type ErrorResponse,
+} from '@app/shared';
 
 const BASE_URL: string = import.meta.env.VITE_API_URL ?? '';
 
@@ -31,23 +38,25 @@ export async function sendChatMessage({
   signal,
   onChunk,
   onError,
-  onDone
+  onDone,
 }: SendChatMessageOptions): Promise<void> {
   try {
     const response = await fetch(`${BASE_URL}${API_ENDPOINTS.CHAT}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        messages: messages.map(m => ({ role: m.role, content: m.content })),
-        model
+        messages: messages.map((m) => ({ role: m.role, content: m.content })),
+        model,
       }),
-      signal
+      signal,
     });
 
     if (!response.ok) {
-      const error = await response.json().catch((): ErrorResponse => ({ error: 'Request failed' })) as ErrorResponse;
+      const error = (await response
+        .json()
+        .catch((): ErrorResponse => ({ error: 'Request failed' }))) as ErrorResponse;
       throw new Error(error.error ?? `HTTP ${response.status}`);
     }
 
@@ -72,7 +81,7 @@ export async function sendChatMessage({
       for (const line of lines) {
         if (line.startsWith(SSE_MARKERS.DATA_PREFIX)) {
           const data = line.slice(SSE_MARKERS.DATA_PREFIX.length);
-          
+
           if (data === SSE_MARKERS.DONE) {
             onDone?.();
             return;
@@ -112,12 +121,14 @@ export async function sendChatMessage({
  */
 export async function getModels(): Promise<Model[]> {
   const response = await fetch(`${BASE_URL}${API_ENDPOINTS.MODELS}`);
-  
+
   if (!response.ok) {
-    const error = await response.json().catch((): ErrorResponse => ({ error: 'Request failed' })) as ErrorResponse;
+    const error = (await response
+      .json()
+      .catch((): ErrorResponse => ({ error: 'Request failed' }))) as ErrorResponse;
     throw new Error(error.error ?? `HTTP ${response.status}`);
   }
 
-  const data = await response.json() as ModelsResponse;
+  const data = (await response.json()) as ModelsResponse;
   return data.models;
 }

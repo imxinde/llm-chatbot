@@ -13,13 +13,50 @@
     "build:backend": "pnpm --filter @app/backend run build",
     "start": "pnpm --filter @app/backend run start",
     "generate:api": "pnpm --filter @app/api-spec run generate",
-    "clean": "pnpm -r run clean"
+    "clean": "pnpm -r run clean",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
   },
-  "keywords": ["chatbot", "llm", "openrouter", "monorepo", "openapi"],
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml,css}": [
+      "prettier --write"
+    ]
+  },
+  "keywords": [
+    "chatbot",
+    "llm",
+    "openrouter",
+    "monorepo",
+    "openapi"
+  ],
   "author": "",
   "license": "MIT",
   "packageManager": "pnpm@10.26.2",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
+    "@eslint-react/eslint-plugin": "^2.5.1",
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "typescript-eslint": "^8.52.0"
   }
 }

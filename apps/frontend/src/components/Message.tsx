@@ -1,4 +1,4 @@
-import { MessageRoleType } from '@app/shared';
+import type { MessageRoleType } from '@app/shared';
 
 /**
  * Message component props
@@ -16,10 +16,7 @@ interface MessageProps {
  */
 function formatMessage(content: string): string {
   // Escape HTML first
-  let formatted = content
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  let formatted = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   // Code blocks (```)
   formatted = formatted.replace(
@@ -28,22 +25,13 @@ function formatMessage(content: string): string {
   );
 
   // Inline code (`)
-  formatted = formatted.replace(
-    /`([^`]+)`/g,
-    '<code>$1</code>'
-  );
+  formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
 
   // Bold (**)
-  formatted = formatted.replace(
-    /\*\*([^*]+)\*\*/g,
-    '<strong>$1</strong>'
-  );
+  formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
   // Italic (*)
-  formatted = formatted.replace(
-    /\*([^*]+)\*/g,
-    '<em>$1</em>'
-  );
+  formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
   // Line breaks
   formatted = formatted.replace(/\n/g, '<br>');
@@ -57,14 +45,9 @@ function Message({ role, content, isStreaming = false }: MessageProps): React.JS
 
   return (
     <div className={`message ${isUser ? 'user-message' : 'assistant-message'}`}>
-      <div className="message-avatar">
-        {isUser ? '👤' : '🤖'}
-      </div>
+      <div className="message-avatar">{isUser ? '👤' : '🤖'}</div>
       <div className="message-content">
-        <div 
-          className="message-text"
-          dangerouslySetInnerHTML={{ __html: formattedContent }}
-        />
+        <div className="message-text" dangerouslySetInnerHTML={{ __html: formattedContent }} />
         {isStreaming && <span className="typing-indicator">▋</span>}
       </div>
     </div>

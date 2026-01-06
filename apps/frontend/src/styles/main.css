@@ -1,26 +1,26 @@
 /* CSS Variables - White Theme */
 :root {
   /* Primary Colors */
-  --primary-500: #2563EB;
-  --primary-400: #3B82F6;
-  --primary-300: #60A5FA;
-  --primary-100: #DBEAFE;
-  --primary-50: #EFF6FF;
+  --primary-500: #2563eb;
+  --primary-400: #3b82f6;
+  --primary-300: #60a5fa;
+  --primary-100: #dbeafe;
+  --primary-50: #eff6ff;
 
   /* Background Colors */
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F9FAFB;
-  --bg-tertiary: #F3F4F6;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
 
   /* Text Colors */
   --text-primary: #111827;
-  --text-secondary: #4B5563;
-  --text-tertiary: #9CA3AF;
+  --text-secondary: #4b5563;
+  --text-tertiary: #9ca3af;
 
   /* Functional Colors */
-  --success: #10B981;
-  --error: #EF4444;
-  --warning: #F59E0B;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -42,7 +42,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   font-family: var(--font-family);
   font-size: 14px;
@@ -78,7 +79,8 @@ html, body {
   flex-shrink: 0;
 }
 
-.header-left, .header-right {
+.header-left,
+.header-right {
   flex: 1;
 }
 
@@ -294,8 +296,14 @@ html, body {
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Input Area */
@@ -494,7 +502,8 @@ html, body {
   margin-top: 4px;
 }
 
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   padding: 20px;
   color: var(--text-tertiary);

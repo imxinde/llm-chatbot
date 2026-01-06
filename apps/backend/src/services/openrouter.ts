@@ -1,4 +1,10 @@
-import { DEFAULTS, Message, Model, ChatCompletionResponse, OpenRouterModelsResponse } from '@app/shared';
+import {
+  DEFAULTS,
+  type Message,
+  type Model,
+  type ChatCompletionResponse,
+  type OpenRouterModelsResponse,
+} from '@app/shared';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
 
@@ -20,10 +26,10 @@ class OpenRouterService {
 
   constructor(apiKey: string) {
     this.headers = {
-      'Authorization': `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
       'HTTP-Referer': 'http://localhost:3000',
-      'X-Title': 'LLM ChatBot'
+      'X-Title': 'LLM ChatBot',
     };
   }
 
@@ -33,19 +39,22 @@ class OpenRouterService {
    * @param model - Model ID
    * @returns SSE stream body
    */
-  async streamChat(messages: Message[], model: string = DEFAULTS.MODEL): Promise<ReadableStream<Uint8Array>> {
+  async streamChat(
+    messages: Message[],
+    model: string = DEFAULTS.MODEL
+  ): Promise<ReadableStream<Uint8Array>> {
     const response = await fetch(`${OPENROUTER_API_URL}/chat/completions`, {
       method: 'POST',
       headers: this.headers,
       body: JSON.stringify({
         model,
-        messages: messages.map(m => ({ role: m.role, content: m.content })),
-        stream: true
-      })
+        messages: messages.map((m) => ({ role: m.role, content: m.content })),
+        stream: true,
+      }),
     });
 
     if (!response.ok) {
-      const error = await response.json().catch((): OpenRouterError => ({})) as OpenRouterError;
+      const error = (await response.json().catch((): OpenRouterError => ({}))) as OpenRouterError;
       throw new Error(error.error?.message ?? `API error: ${response.status}`);
     }
 
@@ -68,13 +77,13 @@ class OpenRouterService {
       headers: this.headers,
       body: JSON.stringify({
         model,
-        messages: messages.map(m => ({ role: m.role, content: m.content })),
-        stream: false
-      })
+        messages: messages.map((m) => ({ role: m.role, content: m.content })),
+        stream: false,
+      }),
     });
 
     if (!response.ok) {
-      const error = await response.json().catch((): OpenRouterError => ({})) as OpenRouterError;
+      const error = (await response.json().catch((): OpenRouterError => ({}))) as OpenRouterError;
       throw new Error(error.error?.message ?? `API error: ${response.status}`);
     }
 
@@ -88,24 +97,24 @@ class OpenRouterService {
   async getModels(): Promise<Model[]> {
     const response = await fetch(`${OPENROUTER_API_URL}/models`, {
       method: 'GET',
-      headers: this.headers
+      headers: this.headers,
     });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch models: ${response.status}`);
     }
 
-    const data = await response.json() as OpenRouterModelsResponse;
-    
+    const data = (await response.json()) as OpenRouterModelsResponse;
+
     // Format and limit models
-    return data.data
-      .slice(0, 50)
-      .map((model): Model => ({
+    return data.data.slice(0, 50).map(
+      (model): Model => ({
         id: model.id,
         name: model.name || model.id.split('/').pop() || model.id,
         description: model.description ?? '',
-        context_length: model.context_length ?? 4096
-      }));
+        context_length: model.context_length ?? 4096,
+      })
+    );
   }
 }
 

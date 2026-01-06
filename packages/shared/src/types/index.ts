@@ -4,13 +4,13 @@
 export const MessageRole = {
   USER: 'user',
   ASSISTANT: 'assistant',
-  SYSTEM: 'system'
+  SYSTEM: 'system',
 } as const;
 
 /**
  * Message role type - union of all possible role values
  */
-export type MessageRoleType = typeof MessageRole[keyof typeof MessageRole];
+export type MessageRoleType = (typeof MessageRole)[keyof typeof MessageRole];
 
 /**
  * Chat message structure
@@ -61,14 +61,14 @@ export interface SSEChunk {
   object?: string;
   created?: number;
   model?: string;
-  choices?: Array<{
+  choices?: {
     index: number;
     delta?: {
       role?: string;
       content?: string;
     };
     finish_reason?: string | null;
-  }>;
+  }[];
 }
 
 /**
@@ -79,14 +79,14 @@ export interface ChatCompletionResponse {
   object: string;
   created: number;
   model: string;
-  choices: Array<{
+  choices: {
     index: number;
     message: {
       role: string;
       content: string;
     };
     finish_reason: string;
-  }>;
+  }[];
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -98,7 +98,7 @@ export interface ChatCompletionResponse {
  * OpenRouter models list response
  */
 export interface OpenRouterModelsResponse {
-  data: Array<{
+  data: {
     id: string;
     name: string;
     description?: string;
@@ -107,7 +107,7 @@ export interface OpenRouterModelsResponse {
       prompt: string;
       completion: string;
     };
-  }>;
+  }[];
 }
 
 /**
